@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: quarkus-react-user-postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.compose
+    volumes:
+      - quarkus-react-user-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  quarkus-react-user-postgres-data:

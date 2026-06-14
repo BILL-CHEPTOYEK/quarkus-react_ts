@@ -1,8 +1,77 @@
-# code-with-quarkus
+# Backend guide
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This backend uses Quarkus with a layered user module:
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+- REST resource for HTTP endpoints
+- application service for business rules and transactions
+- Panache repository for persistence
+- JPA entity for storage
+- DTO plus mapper for the API boundary
+
+The user module is intentionally small, but it follows the same shape you would use in a larger enterprise service.
+
+## Local database
+
+The application expects PostgreSQL in dev mode.
+
+Start it from the backend directory:
+
+```shell script
+docker compose up -d postgres
+```
+
+Default credentials are `quarkus / quarkus`, and the database name is `quarkus`.
+
+To run the backend against that same database, load the local env file first:
+
+```shell script
+set -a
+source .env.compose
+set +a
+./mvnw quarkus:dev
+```
+
+If you need to point the app at another database, set:
+
+- `QUARKUS_DATASOURCE_JDBC_URL`
+- `QUARKUS_DATASOURCE_USERNAME`
+- `QUARKUS_DATASOURCE_PASSWORD`
+
+## Schema management
+
+The schema is created with Flyway migration scripts under `src/main/resources/db/migration`.
+
+Do not hand-edit the tables in Hibernate generation mode for this module. Add a new migration file instead.
+
+## Running the application
+
+```shell script
+./mvnw quarkus:dev
+```
+
+## Running tests
+
+```shell script
+./mvnw test
+```
+
+The test profile uses H2 in PostgreSQL compatibility mode so the user module can be verified without a running PostgreSQL instance.
+
+## User endpoints
+
+- `GET /users`
+- `GET /users/{id}`
+- `POST /users`
+- `PUT /users/{id}`
+- `DELETE /users/{id}`
+
+## Code standards used here
+
+- Keep REST, service, repository, and persistence concerns separated.
+- Expose DTOs from the API, not entities.
+- Validate request payloads at the boundary.
+- Keep schema changes in migrations.
+- Cover the happy path and the validation path with tests.
 
 ## Running the application in dev mode
 

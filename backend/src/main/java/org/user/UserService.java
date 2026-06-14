@@ -1,57 +1,74 @@
-package com.example.user;
+package org.user;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserService {
 
+    private final UserRepository repository;
+    private final UserMapper mapper;
+
     @Inject
-    UserRepository repository;
-
-    public List<User> findAll() {
-        return repository.listAll();
+    public UserService(UserRepository repository, UserMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public User findById(Long id) {
-        return repository.findById(id);
+    public List<UserDto> findAll() {
+        return repository.listAll().stream()
+                .map(entity -> mapper.toDto((User) entity))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<UserDto> findById(Long id) {
+        return Optional.ofNullable(repository.findById(id))
+                .map(mapper::toDto);
+    }
+
+    public Optional<UserDto> findByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(mapper::toDto);
     }
 
     @Transactional
-    public User create(User user) {
+    public UserDto create(UserDto userDto) {
+        if (repository.findByEmail(userDto.email()).isPresent()) {
+            throw new jakarta.ws.rs.WebApplicationException(
+                    "A user with that email already exists.",
+                    jakarta.ws.rs.core.Response.Status.CONFLICT);
+        }
+
+        User user = mapper.toEntity(userDto);
+        user.setId(null);
+
         repository.persist(user);
-        return user;
+        return mapper.toDto(user);
     }
 
     @Transactional
-    public User update(Long id, User updatedUser) {
+    public Optional<UserDto> update(Long id, UserDto updatedUser) {
 
         User existing = repository.findById(id);
 
         if (existing == null) {
-            return null;
+            return Optional.empty();
         }
 
-        existing.name = updatedUser.name;
-        existing.email = updatedUser.email;
+        existing.setName(updatedUser.name());
+        existing.setEmail(updatedUser.email());
 
-        return existing;
+        return Optional.of(mapper.toDto(existing));
     }
 
     @Transactional
     public boolean delete(Long id) {
 
-        User user = repository.findById(id);
-
-        if (user == null) {
-            return false;
-        }
-
-        repository.delete(user);
-
-        return true;
+        return repository.deleteById(id);
     }
 }
