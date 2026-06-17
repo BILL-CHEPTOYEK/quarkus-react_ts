@@ -9,6 +9,6 @@ import java.util.Optional;
 public class UserRepository implements PanacheRepository<User> {
 
     public Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(find("email", email).firstResult());
+        return find("email", email).firstResultOptional();
     }
 }

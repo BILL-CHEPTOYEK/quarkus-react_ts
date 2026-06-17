@@ -39,40 +39,37 @@ export function Login({ onAuthenticated, onSwitchToSignup }: LoginProps) {
   return (
     <main className="min-h-screen bg-transparent px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto grid min-h-[calc(100vh-3rem)] w-full max-w-6xl items-center gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <section className="overflow-hidden rounded-4xl border border-white/10 bg-white/8 p-8 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-10">
-          <h1 className="mt-6 max-w-xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Sign in with an account that exists in the database.
-          </h1>
+        {/*<section className="overflow-hidden rounded-sm border border-white/10 bg-white/8 p-8 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-10">*/}
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {[
-              ['Backend lookup', 'Email is checked through the API.'],
-              ['Scalable flow', 'Auth UI, data UI, and API stay separate.'],
-              ['Clean dev setup', 'Tailwind and Vite keep the UI lightweight.'],
-            ].map(([title, text]) => (
-              <article
-                className="rounded-2xl border border-white/10 bg-slate-950/40 p-4"
-                key={title}
-              >
-                <h2 className="text-sm font-semibold text-white">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        {/*  <div className="mt-8 grid gap-4 sm:grid-cols-3">*/}
+        {/*    {[*/}
+        {/*      ['Backend lookup', 'Email is checked through the API.'],*/}
+        {/*      ['Scalable flow', 'Auth UI, data UI, and API stay separate.'],*/}
+        {/*      ['Clean dev setup', 'Tailwind and Vite keep the UI lightweight.'],*/}
+        {/*    ].map(([title, text]) => (*/}
+        {/*      <article*/}
+        {/*        className="rounded-sm border border-white/10 bg-slate-950/40 p-4"*/}
+        {/*        key={title}*/}
+        {/*      >*/}
+        {/*        <h2 className="text-sm font-semibold text-white">{title}</h2>*/}
+        {/*        <p className="mt-2 text-sm leading-6 text-slate-400">{text}</p>*/}
+        {/*      </article>*/}
+        {/*    ))}*/}
+        {/*  </div>*/}
+        {/*</section>*/}
 
-        <section className="rounded-4xl border border-white/10 bg-slate-950/70 p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
-          <div className="flex rounded-full border border-white/10 bg-white/5 p-1 text-sm font-medium text-slate-300">
+        <section className="rounded-sm border border-white/10 bg-slate-950/70 p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
+          <div className="flex rounded-sm border border-white/10 bg-white/5 p-1 text-sm font-medium text-slate-300">
             <button
               type="button"
-              className="flex-1 rounded-full bg-sky-500 px-4 py-2.5 text-white shadow-lg shadow-sky-500/20 transition"
+              className="flex-1 rounded-sm bg-sky-500 px-4 py-2.5 text-white shadow-lg shadow-sky-500/20 transition"
               aria-current="page"
             >
               Login
             </button>
             <button
               type="button"
-              className="flex-1 rounded-full px-4 py-2.5 transition hover:text-white"
+              className="flex-1 rounded-sm px-4 py-2.5 transition hover:text-white"
               onClick={onSwitchToSignup}
             >
               Sign up
@@ -90,18 +87,18 @@ export function Login({ onAuthenticated, onSwitchToSignup }: LoginProps) {
             <label className="grid gap-2 text-sm font-medium text-slate-200">
               Email address
               <input
-                className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-sky-400/60 focus:bg-white/10 focus:ring-4 focus:ring-sky-500/10"
+                className="rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-sky-400/60 focus:bg-white/10 focus:ring-4 focus:ring-sky-500/10"
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@company.com"
+                placeholder="you@email.com"
                 autoComplete="email"
                 required
               />
             </label>
 
             {error ? (
-              <p className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              <p className="rounded-sm border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
                 {error}
               </p>
             ) : null}
@@ -109,7 +106,7 @@ export function Login({ onAuthenticated, onSwitchToSignup }: LoginProps) {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 inline-flex items-center justify-center rounded-2xl bg-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 inline-flex items-center justify-center rounded-sm bg-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Checking account...' : 'Open dashboard'}
             </button>

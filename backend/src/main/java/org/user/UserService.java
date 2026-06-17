@@ -1,74 +1,99 @@
 package org.user;
 
+import org.jboss.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserService {
 
-    private final UserRepository repository;
-    private final UserMapper mapper;
+    private static final Logger LOG = Logger.getLogger(UserService.class);
 
     @Inject
-    public UserService(UserRepository repository, UserMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
+    UserRepository repository;
+
+    public List<User> findAll() {
+
+        LOG.debug("Fetching all users from database");
+
+        List<User> users = repository.listAll();
+
+        LOG.debugf("Database returned %d users", users.size());
+
+        return users;
     }
 
-    public List<UserDto> findAll() {
-        return repository.listAll().stream()
-                .map(entity -> mapper.toDto((User) entity))
-                .collect(Collectors.toList());
+    public Optional<User> findById(Long id) {
+
+        LOG.debugf("Searching user by id=%d", id);
+
+        return Optional.ofNullable(repository.findById(id));
     }
 
-    public Optional<UserDto> findById(Long id) {
-        return Optional.ofNullable(repository.findById(id))
-                .map(mapper::toDto);
-    }
+    public Optional<User> findByEmail(String email) {
 
-    public Optional<UserDto> findByEmail(String email) {
-        return repository.findByEmail(email)
-                .map(mapper::toDto);
+        LOG.debugf("Searching user by email=%s", email);
+
+        return repository.findByEmail(email);
     }
 
     @Transactional
-    public UserDto create(UserDto userDto) {
-        if (repository.findByEmail(userDto.email()).isPresent()) {
-            throw new jakarta.ws.rs.WebApplicationException(
+    public User create(User user) {
+
+        LOG.infof("Creating user email=%s", user.getEmail());
+
+        if (repository.findByEmail(user.getEmail()).isPresent()) {
+            LOG.warnf("Duplicate email detected: %s", user.getEmail());
+
+            throw new WebApplicationException(
                     "A user with that email already exists.",
-                    jakarta.ws.rs.core.Response.Status.CONFLICT);
+                    Response.Status.CONFLICT);
         }
 
-        User user = mapper.toEntity(userDto);
-        user.setId(null);
-
         repository.persist(user);
-        return mapper.toDto(user);
+
+        LOG.infof("User persisted successfully email=%s", user.getEmail());
+
+        return user;
     }
 
     @Transactional
-    public Optional<UserDto> update(Long id, UserDto updatedUser) {
+    public Optional<User> update(Long id, User updated) {
+
+        LOG.infof("Updating user id=%d", id);
 
         User existing = repository.findById(id);
 
         if (existing == null) {
+            LOG.warnf("Update failed - user not found id=%d", id);
             return Optional.empty();
         }
 
-        existing.setName(updatedUser.name());
-        existing.setEmail(updatedUser.email());
+        existing.setName(updated.getName());
+        existing.setEmail(updated.getEmail());
 
-        return Optional.of(mapper.toDto(existing));
+        LOG.infof("User updated id=%d", id);
+
+        return Optional.of(existing);
     }
 
     @Transactional
     public boolean delete(Long id) {
 
-        return repository.deleteById(id);
+        LOG.infof("Deleting user id=%d", id);
+
+        boolean deleted = repository.deleteById(id);
+
+        if (deleted) {
+            LOG.infof("User deleted id=%d", id);
+        } else {
+            LOG.warnf("Delete failed - user not found id=%d", id);
+        }
+
+        return deleted;
     }
 }
