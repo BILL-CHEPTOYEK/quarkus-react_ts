@@ -4,6 +4,8 @@ import org.jboss.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 import java.util.Optional;
